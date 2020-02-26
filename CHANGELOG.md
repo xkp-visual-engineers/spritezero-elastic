@@ -1,3 +1,9 @@
+## 6.2.0
+##### 2020-02-26
+* Fork spritezero and publish to @elastic namespace
+* Update Mapnik dependency to 4.4.0
+* Add `sdf` option to generate signed distance field sprites
+
 ## 6.1.1
 ##### 2019-05-20
 * Check if SVG width/height are greater than zero before encoding as image in `generateLayout` [#62](https://github.com/mapbox/spritezero/pull/62)

@@ -1,11 +1,11 @@
 {
   "name": "@elastic/spritezero",
-  "version": "6.1.1",
+  "version": "6.2.0",
   "main": "index.js",
   "description": "small opinionated sprites",
   "author": "Tom MacWright",
   "license": "ISC",
-  "repository": "mapbox/spritezero",
+  "repository": "elastic/spritezero",
   "bugs": "https://github.com/mapbox/spritezero/issues",
   "keywords": [
     "sprite",
