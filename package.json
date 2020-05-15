@@ -1,6 +1,6 @@
 {
   "name": "@elastic/spritezero",
-  "version": "6.2.0",
+  "version": "6.2.1",
   "main": "index.js",
   "description": "small opinionated sprites",
   "author": "Tom MacWright",
@@ -14,8 +14,8 @@
     "json"
   ],
   "dependencies": {
-    "@mapbox/shelf-pack": "~3.0.0",
     "@elastic/fontnik": "0.1.0",
+    "@mapbox/shelf-pack": "~3.0.0",
     "jsdom": "^15.1.1",
     "json-stable-stringify": "^1.0.1",
     "mapnik": "^4.4.0",

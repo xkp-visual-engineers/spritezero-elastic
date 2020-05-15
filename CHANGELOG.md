@@ -1,3 +1,7 @@
+## 6.2.1
+##### 2020-05-15
+* Fix SVG parsing [#5](https://github.com/elastic/spritezero/pull/5) @HarelM
+
 ## 6.2.0
 ##### 2020-02-26
 * Fork spritezero and publish to @elastic namespace
