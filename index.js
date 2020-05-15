@@ -158,21 +158,21 @@ function generateLayoutInternal(options, callback) {
         for (var i = 0; i < paths.length; i++) {
           var path = paths[i];
 
-          var scaledPath = new SvgPath(path.getAttribute('d')).scale(options.pixelRatio).toString();
-          var svgPath = new SvgPath(scaledPath).abs().unshort().unarc();
-
+          var svgPath = new SvgPath(path.getAttribute('d')).scale(options.pixelRatio);
+		  
           var parent = path.parentElement;
-          while (parent.tagName === 'G') {
-            if (parent.querySelector('transform')) {
-              svgPath.transform(parent.querySelector('transform'));
+          while (parent.tagName === 'G' || parent.tagName === 'g') {
+            if (parent.getAttribute('transform')) {
+              svgPath = svgPath.transform(parent.getAttribute('transform'));
             }
             parent = parent.parentElement;
           }
-
-          if (svg.querySelector('viewBox')) {
-            var viewBox = svg.querySelector('viewBox').split(/\s+/);
-            svgPath.translate(-viewBox[0], -viewBox[1]);
+          if (el.getAttribute('viewBox')) {
+            var viewBox = el.getAttribute('viewBox').split(/\s+/);
+            svgPath = svgPath.translate(-viewBox[0], -viewBox[1])
+				.scale(w/(viewBox[2] - viewBox[0]), h/(viewBox[3] - viewBox[1]));
           }
+          svgPath = svgPath.abs().unshort().unarc();
 
           commands = commands.concat(svgPath.segments.map(function(segment) {
             switch (segment[0]) {
