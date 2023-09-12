@@ -1,44 +1,39 @@
 {
-  "name": "@elastic/spritezero",
-  "version": "6.2.1",
-  "main": "index.js",
-  "description": "small opinionated sprites",
-  "author": "Tom MacWright",
-  "license": "ISC",
-  "repository": "elastic/spritezero",
-  "bugs": "https://github.com/mapbox/spritezero/issues",
-  "keywords": [
-    "sprite",
-    "images",
-    "icons",
-    "json"
-  ],
-  "dependencies": {
-    "@elastic/fontnik": "0.1.0",
-    "@mapbox/shelf-pack": "~3.0.0",
-    "jsdom": "^15.1.1",
-    "json-stable-stringify": "^1.0.1",
-    "mapnik": "^4.4.0",
-    "pngjs": "^3.4.0",
-    "queue-async": "^1.2.1",
-    "svgpath": "^2.2.2",
-    "xtend": "^4.0.1"
-  },
-  "devDependencies": {
-    "documentation": "4.0.0-beta10",
-    "eslint": "^3.9.0",
-    "glob": "^7.1.0",
-    "greenkeeper-postpublish": "^1.0.1",
-    "tap": "^10.1.0"
-  },
-  "engines": {
-    "node": ">=10.0.0"
-  },
-  "scripts": {
-    "docs": "documentation build index.js --lint --github --format html --output docs/",
-    "lint": "eslint index.js test/",
-    "regenerate-fixtures": "node test/regenerate.js",
-    "test": "npm run lint && tap --cov test/test.js",
-    "postpublish": "greenkeeper-postpublish"
-  }
+	"name": "@mapbox/spritezero",
+	"version": "8.0.3",
+	"main": "./index.js",
+	"description": "small opinionated sprites",
+	"author": "Tom MacWright",
+	"license": "ISC",
+	"repository": "elastic/spritezero",
+	"bugs": "https://github.com/mapbox/spritezero/issues",
+	"keywords": [
+		"sprite",
+		"images",
+		"icons",
+		"json"
+	],
+	"dependencies": {
+		"@mapbox/shelf-pack": "~3.0.0",
+		"json-stable-stringify": "^1.0.1",
+		"mapnik": "^4.4.0",
+		"queue-async": "^1.2.1",
+		"svg-boundings": "^2.0.3",
+		"svgo": "^2.8.0"
+	},
+	"devDependencies": {
+		"documentation": "4.0.0-beta10",
+		"eslint": "^3.9.0",
+		"glob": "^7.1.0",
+		"tap": "^10.1.0"
+	},
+	"engines": {
+		"node": ">=10.0.0"
+	},
+	"scripts": {
+		"docs": "documentation build lib --lint --github --format html --output docs/",
+		"lint": "eslint lib/ test/",
+		"regenerate-fixtures": "node test/regenerate.js",
+		"test": "npm run lint && tap --cov test/*.test.js"
+	}
 }

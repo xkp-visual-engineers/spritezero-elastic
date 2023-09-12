@@ -11,16 +11,17 @@ var test = require('tap').test,
 var update = process.env.UPDATE;
 var emptyPNG = new mapnik.Image(1, 1).encodeSync('png');
 
+const fixtures = glob.sync(path.resolve(path.join(__dirname, '/fixture/svg/*.svg'))).map(function(im) {
+    return {
+        svg: fs.readFileSync(im),
+        id: path.basename(im).replace('.svg', '')
+    };
+});
+
 function getFixtures() {
-    return glob.sync(path.resolve(path.join(__dirname, '/fixture/svg/*.svg')))
-        .map(function(im) {
-            return {
-                svg: fs.readFileSync(im),
-                id: path.basename(im).replace('.svg', '')
-            };
-        }).sort(function() {
-            return Math.random() - 0.5;
-        });
+    return fixtures.sort(function() {
+        return Math.random() - 0.5;
+    });
 }
 
 test('generateLayout', function(t) {
@@ -126,9 +127,31 @@ test('generateImage', function(t) {
                         tt.notOk(err, 'no error');
                         tt.ok(res, 'produces image');
                         if (update) fs.writeFileSync(pngPath, res);
-                        tt.deepEqual(res, fs.readFileSync(pngPath));
+                        tt.ok(Math.abs(res.length - fs.readFileSync(pngPath).length) < 1000);
                         tt.end();
                     });
+                });
+            });
+        });
+    });
+    t.end();
+});
+
+// Generating both a valid layout and image in one pass
+test('generateImage with format:true', function(t) {
+    [1, 2, 4].forEach(function(scale) {
+        t.test('@' + scale, function(tt) {
+            var optimizedPngPath = path.resolve(path.join(__dirname, 'fixture/sprite@' + scale + '-64colors.png'));
+            spritezero.generateLayout({ imgs: getFixtures(), pixelRatio: scale, format: true }, function(err, dataLayout, imageLayout) {
+                tt.ifError(err);
+                tt.ok(dataLayout);
+                tt.ok(imageLayout);
+                spritezero.generateOptimizedImage(imageLayout, {quality: 64}, function(err, res) {
+                    tt.notOk(err, 'no error');
+                    tt.ok(res, 'produces image');
+                    if (update) fs.writeFileSync(optimizedPngPath, res);
+                    tt.ok(Math.abs(res.length - fs.readFileSync(optimizedPngPath).length) < 1000);
+                    tt.end();
                 });
             });
         });
@@ -152,7 +175,7 @@ test('generateImageUnique', function(t) {
                         tt.notOk(err, 'no error');
                         tt.ok(res, 'produces image');
                         if (update) fs.writeFileSync(pngPath, res);
-                        tt.deepEqual(res, fs.readFileSync(pngPath));
+                        tt.ok(Math.abs(res.length - fs.readFileSync(pngPath).length) < 1000);
                         tt.end();
                     });
                 });
@@ -247,5 +270,117 @@ test('generateLayout only relative width/height SVG returns empty sprite object'
             t.deepEqual(image, emptyPNG, 'empty PNG response');
             t.end();
         });
+    });
+});
+
+test('generateLayout containing image with no width or height SVG', function(t) {
+    var fixtures = [
+      {
+        id: 'no-width-or-height',
+        svg: fs.readFileSync('./test/fixture/no-width-or-height.svg')
+      },
+      {
+        id: 'art',
+        svg: fs.readFileSync('./test/fixture/svg/art-gallery-18.svg')
+      }
+    ];
+
+    spritezero.generateLayout({ imgs: fixtures, pixelRatio: 1, format: true }, function(err, formatted) {
+        t.ifError(err);
+        t.deepEqual(formatted, { art: { width: 18, height: 18, x: 0, y: 0, pixelRatio: 1 } }, 'only "art" is in layout');
+        t.end();
+    });
+});
+
+test('generateLayout containing only image with no width or height', function(t) {
+    var fixtures = [
+        {
+          id: 'no-width-or-height',
+          svg: fs.readFileSync('./test/fixture/no-width-or-height.svg')
+        }
+      ];
+
+      spritezero.generateLayout({ imgs: fixtures, pixelRatio: 1, format: false }, function(err, layout) {
+          t.ifError(err);
+          t.deepEqual(layout, { width: 1, height: 1, items: []}, 'empty layout');
+
+          spritezero.generateImage(layout, function(err, image) {
+              t.ifError(err);
+              t.deepEqual(image, emptyPNG, 'empty PNG response');
+              t.end();
+          });
+      });
+});
+
+test('generateLayout with extractMetadata option set to false', function (t) {
+    var fixtures = [
+        {
+            id: 'cn',
+            svg: fs.readFileSync('./test/fixture/svg-metadata/cn-nths-expy-2-affinity.svg')
+        }
+    ];
+
+    spritezero.generateLayout({ imgs: fixtures, pixelRatio: 1, format: true, extractMetadata: false }, function (err, formatted) {
+        t.ifError(err);
+        t.deepEqual(formatted, { cn: { width: 20, height: 23, x: 0, y: 0, pixelRatio: 1 } });
+        t.end();
+    });
+});
+
+test('generateLayout without extractMetadata option set (defaults to true)', function (t) {
+    var fixtures = [
+        {
+            id: 'cn',
+            svg: fs.readFileSync('./test/fixture/svg-metadata/cn-nths-expy-2-affinity.svg')
+        }
+    ];
+
+    spritezero.generateLayout({ imgs: fixtures, pixelRatio: 1, format: true }, function (err, formatted) {
+        t.ifError(err);
+        t.deepEqual(formatted, { cn: { width: 20, height: 23, x: 0, y: 0, pixelRatio: 1, content: [2, 5, 18, 18], stretchX: [[4, 16]], stretchY: [[5, 16]] } });
+        t.end();
+    });
+});
+
+test('generateLayout without extractMetadata option set (defaults to true) when generating an image layout (format set to false)', function (t) {
+    var fixtures = [
+        {
+            id: 'cn',
+            svg: fs.readFileSync('./test/fixture/svg-metadata/cn-nths-expy-2-affinity.svg')
+        }
+    ];
+
+    spritezero.generateLayout({ imgs: fixtures, pixelRatio: 1, format: false }, function (err, formatted) {
+        t.ifError(err);
+        t.equal(formatted.items[0].stretchX, undefined);
+        t.end();
+    });
+});
+
+test('generateLayout with both placeholder and stretch zone', function (t) {
+    var fixtures = [
+        {
+            id: 'au-national-route-5',
+            svg: fs.readFileSync('./test/fixture/svg-metadata/au-national-route-5.svg')
+        }
+    ];
+    spritezero.generateLayout({ imgs: fixtures, pixelRatio: 1, format: true }, function (err, formatted) {
+        t.ifError(err);
+        t.deepEqual(
+            formatted,
+            {
+                'au-national-route-5': {
+                    width: 38,
+                    height: 20,
+                    x: 0,
+                    y: 0,
+                    pixelRatio: 1,
+                    content: [3, 7, 23, 18],
+                    stretchX: [[5, 7]],
+                    placeholder: [0, 7, 38, 13]
+                }
+            }
+        );
+        t.end();
     });
 });

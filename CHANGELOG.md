@@ -1,12 +1,43 @@
-## 6.2.1
-##### 2020-05-15
-* Fix SVG parsing [#5](https://github.com/elastic/spritezero/pull/5) @HarelM
+## 8.0.3
+#### 2023-05-24
+* Preserve `buffer` in `ImageLayout` if `format: true` is passed
+
+## 8.0.2
+#### 2022-09-12
+* Updates `svgo` dependency to 2.8.0
+
+## 8.0.1
+#### 2022-08-19
+* Updates `nth-check` dependency to 2.0.1
+
+## 8.0.0
+#### 2021-08-23
+* Changes the `stretchMetadata` option to `extractMetadata`.
+* Extends the `extractMetadata` function to support placeholder text elements.
+
+## 7.0.1
+* `generateLayout({format:true})` now returns a second argument, which is a layout object that can be sent to generateImage to generate a final image. Normally users would generate this object with `generateLayout({format:false})` but now `generateLayout({format:true})` will provide both the data layout (as first arg) and the image layout (as the second arg).
+* Added new function `generateOptimizedImage` which, compared to `generateImage`, expects an options argument as the second option and returns a paletted PNG. Currently this options argument accepts a `quality` property to control the quantization level of the resulting PNG.
+
+
+## 7.0.0
+#### 2020-04-22
+* Optimized layout and image generation: 1.5x faster `generateLayout`
+
+## 6.3.0
+#### 2020-04-10
+* Adds `stretchMetadata` option (defaults to true) to `generateLayout` and `generateLayoutUnique` [#75](https://github.com/mapbox/spritezero/pull/75)
+* Removes xtend as a direct dependency
 
 ## 6.2.0
-##### 2020-02-26
-* Fork spritezero and publish to @elastic namespace
-* Update Mapnik dependency to 4.4.0
-* Add `sdf` option to generate signed distance field sprites
+#### 2020-03-09
+* Add methods to parse and validate metadata for stretchable icons from SVGs: `extractMetadata` and `validateMetadata`
+* Drop support for Node < 10
+* Updates Mapnik dependency to 4.4.0
+
+## 6.1.2
+##### 2019-11-11
+* Check if SVG has width/height attributes before encoding as image in `generateLayout` [#69](https://github.com/mapbox/spritezero/pull/69)
 
 ## 6.1.1
 ##### 2019-05-20
